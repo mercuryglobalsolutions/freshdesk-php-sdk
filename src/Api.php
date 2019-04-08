@@ -26,6 +26,7 @@ use Freshdesk\Resources\Forum;
 use Freshdesk\Resources\Group;
 use Freshdesk\Resources\Product;
 use Freshdesk\Resources\SLAPolicy;
+use Freshdesk\Resources\Solution;
 use Freshdesk\Resources\Ticket;
 use Freshdesk\Resources\TimeEntry;
 use Freshdesk\Resources\Topic;
@@ -108,6 +109,14 @@ class Api
     public $categories;
 
     /**
+     * Solution resource
+     *
+     * @api
+     * @var Solution
+     */
+    public $solutions;
+
+    /**
      * Forum resources
      *
      * @api
@@ -176,6 +185,12 @@ class Api
      * @var string
      */
     private $baseUrl;
+
+    /**
+     * @internal
+     * @var array
+     */
+    protected $headers;
 
     /**
      * Constructs a new api instance
@@ -261,6 +276,37 @@ class Api
     }
 
     /**
+     * Check if a specific header exists in the API response.
+     *
+     * @param string $name
+     * @return bool
+     */
+    public function hasHeader($name)
+    {
+        return (isset($this->headers[$name]));
+    }
+
+    /**
+     * Get the value of a response header.
+     *
+     * @param string $name
+     * @return string|null
+     */
+    public function getHeader($name)
+    {
+        $strReturn = null;
+
+        if ($this->hasHeader($name)) {
+            $strReturn = $this->headers[$name];
+            if (is_array($strReturn)) {
+                $strReturn = $strReturn[0];
+            }
+        }
+
+        return $strReturn;
+    }
+
+    /**
      * Performs the request
      *
      * @internal
@@ -334,6 +380,9 @@ class Api
         $this->forums = new Forum($this);
         $this->topics = new Topic($this);
         $this->comments = new Comment($this);
+
+        //Solutions
+        $this->solutions = new Solution($this);
 
         //Admin
         $this->products = new Product($this);
