@@ -325,6 +325,9 @@ class Api
         try {
             switch ($method) {
                 case 'GET':
+                    $objResponse = $this->client->get($url, $options);
+                    $this->headers = $objResponse->getHeaders();
+
                     return json_decode($this->client->get($url, $options)->getBody(), true);
                 case 'POST':
                     return json_decode($this->client->post($url, $options)->getBody(), true);
